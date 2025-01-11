@@ -1,8 +1,9 @@
 ﻿using TaskManager.Communication.Enums;
+using TaskManager.Domain.Contracts;
 
 namespace TaskManager.Domain.Entities.Task
 {
-  public class TaskEntity
+  public class TaskEntity : ITaskEntity
   {
     public Guid Id { get; set; } = Guid.NewGuid();
     public string Name { get; set; } = string.Empty;
