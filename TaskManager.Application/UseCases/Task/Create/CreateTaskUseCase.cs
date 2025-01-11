@@ -1,11 +1,13 @@
 ﻿using TaskManager.Communication.Requests;
 using TaskManager.Communication.Responses;
+using TaskManager.Domain.Contracts;
 using TaskManager.Domain.Entities.Task;
 
 namespace TaskManager.Application.UseCases.Task.Create
 {
-  public class CreateTaskUseCase
+  public class CreateTaskUseCase(ITaskRepository taskRepository)
   {
+    
 
     public ResponseTaskJson Execute(RequestCreateTaskJson request)
     {
@@ -17,6 +19,8 @@ namespace TaskManager.Application.UseCases.Task.Create
         Status = request.Status,
         EndDate = request.EndDate
       };
+      
+      taskRepository.Save(task);
 
       return new ResponseTaskJson
       {
