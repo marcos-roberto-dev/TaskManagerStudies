@@ -7,7 +7,7 @@ namespace TaskManager.Application.UseCases.Task.Create
   public class CreateTaskUseCase
   {
 
-    public ResponseCreateTaskJson Execute(RequestCreateTaskJson request)
+    public ResponseTaskJson Execute(RequestCreateTaskJson request)
     {
       var task = new TaskEntity
       {
@@ -18,7 +18,7 @@ namespace TaskManager.Application.UseCases.Task.Create
         EndDate = request.EndDate
       };
 
-      return new ResponseCreateTaskJson
+      return new ResponseTaskJson
       {
         Id = task.Id,
         Name = task.Name,
