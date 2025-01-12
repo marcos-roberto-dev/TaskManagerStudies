@@ -6,6 +6,13 @@ public class GetByIdTaskUseCase(ITaskRepository taskRepository)
 {
     public ITaskEntity? Execute(Guid id)
     {
-        return taskRepository.GetById(id);
+        var task = taskRepository.GetById(id);
+
+        if (task == null)
+        {
+            throw new Exception("Task not found"); 
+        }
+
+        return task;
     }
 }

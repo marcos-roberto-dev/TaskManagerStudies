@@ -3,6 +3,7 @@ using TaskManager.Application.UseCases.Task.Create;
 using TaskManager.Application.UseCases.Task.Delete;
 using TaskManager.Application.UseCases.Task.GetAll;
 using TaskManager.Application.UseCases.Task.GetById;
+using TaskManager.Application.UseCases.Task.Update;
 using TaskManager.Communication.Requests;
 using TaskManager.Communication.Responses;
 using TaskManager.Domain.Contracts;
@@ -33,22 +34,33 @@ namespace TaskManager.API.Controllers
     [HttpGet]
     [Route("{id}")]
     [ProducesResponseType(typeof(ResponseTaskJson), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ResponseErrorsJson), StatusCodes.Status404NotFound)]
     public IActionResult GetById(Guid id)
     {
-      var response = new GetByIdTaskUseCase(taskRepository).Execute(id);
-      if (response is null)
+
+      try
       {
-        return NotFound();
+        var response = new GetByIdTaskUseCase(taskRepository).Execute(id);
+
+        return Ok(response);
+
       }
-      return Ok(response);
+      catch (Exception ex)
+      {
+        var errorResponse = new ResponseErrorsJson
+        {
+          Errors = new List<string> { ex.Message }
+        };
+        return NotFound(errorResponse);
+      }
     }
 
     [HttpDelete]
     [Route("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ResponseErrorsJson), StatusCodes.Status404NotFound)]
     public IActionResult Delete(Guid id)
+    
     {
       try
       {
@@ -58,9 +70,33 @@ namespace TaskManager.API.Controllers
       }
       catch(Exception ex)
       {
-        return NotFound(ex.Message);
+        var errorResponse = new ResponseErrorsJson
+        {
+          Errors = new List<string> { ex.Message }
+        };
+        return NotFound(errorResponse);
       }
     }
     
+    [HttpPut]
+    [Route("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseErrorsJson), StatusCodes.Status404NotFound)]
+    public IActionResult Update(Guid id, RequestUpdateTaskJson requestTask)
+    {
+      try
+      {
+        var taskEdit = new UpdateTaskUseCase(taskRepository).Execute(id, requestTask);
+        return Ok(taskEdit);
+      }
+      catch (Exception ex)
+      {
+        var errorResponse = new ResponseErrorsJson
+        {
+          Errors = new List<string> { ex.Message }
+        };
+        return NotFound(errorResponse);
+      }
+    }
   }
 }
